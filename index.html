@@ -37,7 +37,20 @@ var DAYS  = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 var EVENTS= [{"date": "2026-07-04", "label": "London WDF Championship", "color": "#E8520A"}, {"date": "2026-09-06", "label": "Turnier Italien", "color": "#CC4422"}, {"date": "2026-12-07", "label": "Bangkok Weltmeisterschaft", "color": "#C9A84C"}];
 var SK="vi2026_v8";
 function loadLogs(){try{return JSON.parse(localStorage.getItem(SK)||"{}")}catch(e){return{}}}
-function saveLogs(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(e){}}
+function saveLogs(d, changedDate) {
+  try { localStorage.setItem(SK, JSON.stringify(d)); } catch(e) {}
+  
+  // Wenn wir online sind, lade das spezifische Datum in die Supabase-Cloud hoch
+  if (sbReady && state.user && state.user.id !== "offline" && changedDate) {
+    supabase.from("logs").upsert({
+      user_id: state.user.id,
+      date: changedDate,
+      tasks: d[changedDate] || []
+    }, { onConflict: 'user_id, date' }).then(function(res) {
+      if (res.error) console.error("Cloud-Sync Fehler:", res.error);
+    });
+  }
+}
 function loadPRs(){try{return JSON.parse(localStorage.getItem(SK+"_prs")||"[]")}catch(e){return[]}}
 function savePRs(d){try{localStorage.setItem(SK+"_prs",JSON.stringify(d))}catch(e){}}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
