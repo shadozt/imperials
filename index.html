@@ -305,7 +305,6 @@ function fieldLabel(txt) {
 function doLogin(email, pw) {
   if (!email || !pw) { state.authError = "Bitte E-Mail und Passwort eingeben."; render(); return; }
   if (!sbReady) {
-    // Fallback: localStorage only
     var saved = localStorage.getItem("vi_user_" + email);
     if (!saved) { state.authError = "Kein Account gefunden. Bitte registriere dich zuerst."; render(); return; }
     var u = JSON.parse(saved);
@@ -315,6 +314,28 @@ function doLogin(email, pw) {
     localStorage.setItem("vi_user", JSON.stringify(state.user));
     render(); return;
   }
+  state.loading = true; render();
+  supabase.auth.signInWithPassword({ email: email, password: pw }).then(function(res) {
+    if (res.error) { state.loading = false; state.authError = res.error.message; render(); return; }
+    var uid = res.data.user.id;
+    supabase.from("profiles").select("username").eq("id", uid).single().then(function(pRes) {
+      state.user = { id: uid, email: email, username: (pRes.data && pRes.data.username) || email.split("@")[0] };
+      localStorage.setItem("vi_user", JSON.stringify(state.user));
+      
+      // NEU: Lade alle abgehakten Trainings aus der Cloud!
+      supabase.from("logs").select("date, tasks").eq("user_id", uid).then(function(lRes) {
+        if (lRes.data) {
+          var cloudLogs = {};
+          lRes.data.forEach(function(row) { cloudLogs[row.date] = row.tasks; });
+          state.logs = cloudLogs;
+          try { localStorage.setItem(SK, JSON.stringify(cloudLogs)); } catch(e) {}
+        }
+        state.loading = false;
+        render();
+      });
+    });
+  });
+}
   state.loading = true; render();
   supabase.auth.signInWithPassword({ email: email, password: pw }).then(function(res) {
     state.loading = false;
