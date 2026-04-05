@@ -59,8 +59,6 @@ function importData(file,cb){var r=new FileReader();r.onload=function(e){try{var
 // ═══════════════════════════════════════════════════════
 
 // ── SUPABASE CONFIG ─────────────────────────────────────
-// → Erstelle ein kostenloses Projekt auf supabase.com
-// → Kopiere URL und anon key hier rein:
 var SUPABASE_URL  = "https://qklwhrwopvwbegfeswuo.supabase.co";
 var SUPABASE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrbHdocndvcHZ3YmVnZmVzd3VvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTM2NDYsImV4cCI6MjA5MDk2OTY0Nn0.FjqKM_lTGehbzvyhWagiSL3-tKRQBVYAKpyzeBYMreQ";
 var supabase = null;
@@ -948,8 +946,8 @@ function renderNav() {
 
 // ── INIT ─────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", function() {
-  // initSupabase(); // Wir deaktivieren Supabase für den Moment komplett!
-  render(); // Wir zwingen die App, sofort zu zeichnen!
+  initSupabase(); //Die Datenbank wird hiermit gestartet
+  render();
 });
 
 </script>
