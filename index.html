@@ -347,7 +347,6 @@ function doLogin(email, pw) {
       render();
     });
   });
-}
 
 function doRegister(email, pw, username) {
   if (!email || !pw || !username) { state.authError = "Bitte alle Felder ausfüllen."; render(); return; }
