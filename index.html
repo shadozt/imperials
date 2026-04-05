@@ -947,9 +947,9 @@ function renderNav() {
 }
 
 // ── INIT ─────────────────────────────────────────────────
-window.addEventListener("load", function() {
-  initSupabase();
-  render();
+document.addEventListener("DOMContentLoaded", function() {
+  // initSupabase(); // Wir deaktivieren Supabase für den Moment komplett!
+  render(); // Wir zwingen die App, sofort zu zeichnen!
 });
 
 </script>
