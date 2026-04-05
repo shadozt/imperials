@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="VI Coach"/>
 <meta name="theme-color" content="#07080F"/>
@@ -65,8 +66,11 @@ var supabase = null;
 var sbReady = false;
 
 function initSupabase() {
-  if (typeof window.supabase === 'undefined' || !window.supabase.createClient) return;
-  if (SUPABASE_URL === "YOUR_SUPABASE_URL") return; // not configured yet
+  if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+    console.warn("Supabase blockiert oder nicht geladen. App startet im Offline-Modus.");
+    return;
+  }
+  if (SUPABASE_URL === "YOUR_SUPABASE_URL") return; // noch nicht konfiguriert
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   sbReady = true;
 }
